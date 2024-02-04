@@ -39,14 +39,14 @@ OR
 
 ## Using MSVC-cl 
 
-> cl /D"<define macro>" /I:"<include dir>" /LD <source filename.cpp> /link /LIBPATH:"<library dir>" /IMPLIB:'<library file>'
+> cl /D"<define macro>" /I:"<include dir>" /LD <source filename.cpp> /link /LIBPATH:"<library dir>" /IMPLIB:'<library file>' /Fo:"<Optional: object files output directory"
 
 > cl /D"WINDOW_PLATFORM" /I"C:/.." /LD SourceFile.cpp /link /LIBPATH:"C:/.." /IMPOLIB:'LibraryFile.lib'
 
 --------------------------------------------------------------------------------
 // /D<macro> ---- defines preprocessor macros or directives. 
 // /LD ---- builds a shared library file (static or dynamic) (.dll + .lib in Windows).
-// /Fo:"<desired file name>" ---- name all object files (.obj, .dll, .exp, .lib).
+// /Fo:"<output directory for .obj files>" ---- Specify an output directory for .obj files generation
 --------------------------------------------------------------------------------
 * 
 *

@@ -20,6 +20,8 @@
 
   /MT                     Use static run-time
 
+  /Fo:"Dir"               Output directory for object files
+
 /Zc:dllexportInlines-   Don't dllexport/dllimport inline member functions of dllexport/import classes
 
 /Zc:dllexportInlines    dllexport/dllimport inline member functions of dllexport/import classes (default)
