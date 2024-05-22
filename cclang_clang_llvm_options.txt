@@ -1,0 +1,105 @@
+// clang-cl
+
+ /imsvc <dir>            Add directory to system include search path, as if part of %INCLUDE%
+
+  /I <dir>                Add directory to include search path
+
+  /J                      Make char type unsigned
+
+  /LDd                    Create debug DLL
+
+  /LD                     Create DLL
+
+  /link <options>         Forward options to the linker
+
+  /MDd                    Use DLL debug run-time
+
+  /MD                     Use DLL run-time
+
+  /MTd                    Use static debug run-time
+
+  /MT                     Use static run-time
+
+  /Fo:"Dir"               Output directory for object files
+
+/Zc:dllexportInlines-   Don't dllexport/dllimport inline member functions of dllexport/import classes
+
+/Zc:dllexportInlines    dllexport/dllimport inline member functions of dllexport/import classes (default)
+
+// clang-llvm in Windows
+// clang++
+
+-D<macro>=<value>, --define-macro <arg>, --define-macro=<arg>¶
+Define <macro> to <value> (or 1 if <value> omitted)
+
+clang++ -c FileA.cpp -----> This will compile and assemble but not link
+
+clang++ -shared -o FileA.dll FileA.o -------> This will spit application.dll + applicatoin.lib
+
+// clang-llvm in Linux
+// clang++
+
+// File.h in (ProjectFolder/include)
+// File.cpp in (ProjectFolder/src) "This will be the static/shared library"
+// main.cpp in (ProjectFolder)
+
+// File.h
+#ifndef FILE_H_
+#define FILE_H_
+
+#include <iostream>
+
+extern void MyFunc(); // 'extern' to tell the compiler that there is a definition of void MyFunc(); somewhere then the linker will resolve this as an external linkage. Which that will in File.cpp. Be aware only one definition should exist in one of the source files.
+
+#endif // FILE_H_
+
+//File.cpp
+#include "File.h"
+
+void MyFunc() { std::cout << "From File library" << std::endl; }
+
+//main.cpp
+#include "File.h"
+
+int main() { MyFunc(); return 0; }
+
+//Compilation
+//First building the static/shared library from File.cpp
+
+clang++ -c -o FileLibrary.o File.cpp -fPIC
+
+// -c flag to tell the compiler to only generate an object file, assembly files with no link
+// -o output name
+// -fPIC "Position-Independent Code" flag
+
+// "FileLibrary.o" is generated now
+
+//Now "FileLibrary.o" is the object file in which will be mainly used to build either the static or shared library
+
+//Static library build
+// archive all .o files together
+
+ar r FileStaticLibrary.a FileLibrary.o
+
+// "FileStaticLibrary.a" is generated now 
+// .a is "Static Library" in Linux or an "Archive"
+
+//Shared library build
+
+clang++ -shared -o FileSharedLibrary.so FileLibrary.o
+
+// "FileSharedLibrary.so" is now generated
+// .so is "Shared Library" in Linux
+
+// In Linux, when building with libraries, Linux assumes library files are prefixed wih 'lib'. In this case, you should rename the "FileStaticLibrary.a" and "FileSharedLibrary.so" to be "libFileStaticLibrary.a" and "libFileSharedLibrary.so"
+// This is important when the '-l' argument is specified
+
+//Now to compile main.cpp
+// clang++ main.cpp -I/header/file/location -L/library/file/location/ -Wl,-rpath=/library/file/location -lFileSharedLibrary
+
+// -I flag is to specify for header files location
+// -L flag is to specify for library file location
+// -Wl,rpath= flag is to specify the runtime library location
+// -l flag is for the library file is to like against
+
+// use -D for any preprocesser definitions, like -DLINUX_BUILD
